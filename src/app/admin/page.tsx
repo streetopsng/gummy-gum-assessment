@@ -13,8 +13,6 @@ import {
   UserCheck,
   CheckCircle,
   Zap,
-  Target,
-  TrendingUp,
   X,
   ChevronRight
 } from "lucide-react";
@@ -25,12 +23,12 @@ export default function AdminDashboard() {
   const isWelcome = searchParams.get("welcome") === "true";
   const [showWelcome, setShowWelcome] = useState(isWelcome);
 
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(true);
 
   // Detailed view state
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [details, setDetails] = useState<any>(null);
+  const [details, setDetails] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [detailsLoading, setDetailsLoading] = useState(false);
 
   // Invite state
@@ -291,7 +289,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {data.candidates.map((c: any) => (
+                {data.candidates.map((c: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                   <tr 
                     key={c.id} 
                     onClick={() => openCandidateDetails(c.id)}
@@ -366,7 +364,7 @@ export default function AdminDashboard() {
                     <CheckCircle className="w-6 h-6" />
                   </div>
                   <h3 className="font-bold text-lg">Invite Generated!</h3>
-                  <p className="text-sm text-slate-500 mb-2">Copy this magic link and send it to {inviteName}. They won't need a password.</p>
+                  <p className="text-sm text-slate-500 mb-2">Copy this magic link and send it to {inviteName}. They won&apos;t need a password.</p>
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-700 break-all select-all relative group cursor-text">
                     {inviteLink}
                   </div>
@@ -519,7 +517,7 @@ export default function AdminDashboard() {
                   </div>
                   
                   <div className="relative border-l-2 border-slate-100 ml-3 space-y-8 pb-8">
-                    {details.timeline.map((resp: any, i: number) => (
+                    {details.timeline.map((resp: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                       <div key={resp.id} className="relative pl-6">
                         <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-brand-purple ring-4 ring-white"></div>
                         
@@ -527,7 +525,7 @@ export default function AdminDashboard() {
                           {resp.act} — Scene {resp.sceneNum}
                         </div>
                         <h4 className="font-bold text-[15px] text-slate-900 mb-2">{resp.title}</h4>
-                        <p className="text-[13px] text-slate-500 mb-4 italic leading-relaxed">"{resp.question}"</p>
+                        <p className="text-[13px] text-slate-500 mb-4 italic leading-relaxed">&quot;{resp.question}&quot;</p>
                         
                         <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Candidate Selected</div>

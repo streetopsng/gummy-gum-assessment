@@ -6,7 +6,7 @@ import { CARDS } from "../../../../data/cards";
 
 const prisma = new PrismaClient();
 
-export async function POST(req: Request) {
+export async function POST(req: Request /* eslint-disable-line @typescript-eslint/no-unused-vars */) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;

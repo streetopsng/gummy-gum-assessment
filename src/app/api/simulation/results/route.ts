@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { PERSONAS } from "../../../../data/personas";
+import { Persona } from "../../../../data/types";
 
 const prisma = new PrismaClient();
 
@@ -39,9 +40,9 @@ export async function GET(req: Request) {
     const top2 = meterValues[1].name;
     
     // Find matching persona
-    let persona = {
+    let persona: Persona = {
       name: "The Enigma",
-      description: "A balanced profile defying typical categorization."
+      desc: "A balanced profile defying typical categorization."
     };
 
     for (const key in PERSONAS) {

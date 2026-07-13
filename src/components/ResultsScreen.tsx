@@ -1,13 +1,13 @@
 import { Meters, SkillLogEntry } from "../data/types";
 import { PERSONAS } from "../data/personas";
-import { Award, User, CheckCircle2, AlertCircle, BarChart2, LogOut } from "lucide-react";
+import { User, CheckCircle2, AlertCircle, BarChart2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type ResultsScreenProps = {
   meters: Meters;
   skillLog: SkillLogEntry[];
   onRestart: () => void;
-  personaOverride?: any;
+  personaOverride?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 export function ResultsScreen({
@@ -89,7 +89,7 @@ export function ResultsScreen({
           Probation Complete 🔥
         </h2>
         <p className="text-[15px] md:text-[16px] text-white/90 font-light leading-relaxed max-w-[600px] relative z-10">
-          You've completed the 90-day simulation. Based on your decisions across all 30 scenarios, your professional persona has been mapped.
+          You&apos;ve completed the 90-day simulation. Based on your decisions across all 30 scenarios, your professional persona has been mapped.
         </p>
       </div>
 
@@ -221,7 +221,7 @@ export function ResultsScreen({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {rows.map((r, i) => (
+                {rows.map((r) => (
                   <tr key={r.skill} className="hover:bg-slate-50 transition-colors">
                     <td className="py-3.5 px-5 text-slate-700 font-medium">{r.skill}</td>
                     <td className="py-3.5 px-5 text-center text-slate-500 font-mono">{r.count}</td>

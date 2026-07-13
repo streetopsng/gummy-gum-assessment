@@ -48,16 +48,16 @@ export async function GET(req: NextRequest) {
     
     // Calculate max possible points for overall alignment score
     let totalMaxPoints = 0;
-    CARDS.forEach((card: any) => {
+    CARDS.forEach((card: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
       let maxPoints = -2;
-      card.options.forEach((opt: any) => {
+      card.options.forEach((opt: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
         const pts = getQualityPoints(opt.quality);
         if (pts > maxPoints) maxPoints = pts;
       });
       totalMaxPoints += maxPoints;
     });
     
-    const candidates = users.map((user: any) => {
+    const candidates = users.map((user: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
       const session = user.sessions[0];
       if (!session) return null;
       
@@ -79,10 +79,10 @@ export async function GET(req: NextRequest) {
 
       // Calculate candidate alignment score
       let candidatePoints = 0;
-      session.responses.forEach((response: any) => {
-        const matchedCard = CARDS.find((c: any) => `card_${c.num}` === response.cardId);
+      session.responses.forEach((response: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+        const matchedCard = CARDS.find((c: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => `card_${c.num}` === response.cardId);
         if (matchedCard) {
-          const matchedOption = matchedCard.options.find((o: any) => o.label === response.selectedOption);
+          const matchedOption = matchedCard.options.find((o: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => o.label === response.selectedOption);
           if (matchedOption) {
             candidatePoints += getQualityPoints(matchedOption.quality);
           }
@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
     }).filter(Boolean);
 
     // Sort by most recently active
-    candidates.sort((a: any, b: any) => new Date(b.lastActive).getTime() - new Date(a.lastActive).getTime());
+    candidates.sort((a, b) => new Date(b!.lastActive).getTime() - new Date(a!.lastActive).getTime());
 
     const attendanceRate = totalSessions > 0 ? Math.round((totalCompleted / totalSessions) * 100) : 0;
 

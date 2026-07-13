@@ -94,7 +94,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
               Simulation Instructions
             </h3>
             <p className="text-[16px] leading-relaxed text-slate-600 mb-4 font-light">
-              You've just joined NovaCore Africa. Over the next ninety days you'll face the same thirty moments every new hire faces — bridge traffic, a lost onboarding file, a red-inked first report, an angry client, a stretch assignment nobody wants. What happens next never changes. How you respond does.
+              You&apos;ve just joined NovaCore Africa. Over the next ninety days you&apos;ll face the same thirty moments every new hire faces — bridge traffic, a lost onboarding file, a red-inked first report, an angry client, a stretch assignment nobody wants. What happens next never changes. How you respond does.
             </p>
             <p className="text-[15px] leading-relaxed text-slate-500 mb-8 font-light italic">
               This is a fixed-sequence simulation. Everyone sees the same thirty scenes, in the same order. Your choices are scored, not routed.

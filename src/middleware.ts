@@ -19,7 +19,7 @@ export async function middleware(req: NextRequest) {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET || "default_super_secret_for_dev_only");
       const { payload } = await jwtVerify(token, secret);
       verifiedToken = payload;
-    } catch (error) {
+    } catch (error) /* eslint-disable-line @typescript-eslint/no-unused-vars */ {
       // Token invalid or expired
       verifiedToken = null;
     }

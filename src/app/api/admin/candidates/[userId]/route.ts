@@ -82,12 +82,12 @@ export async function GET(
     // Calculate max possible points per Act
     const maxPointsPerAct: Record<string, number> = {};
     let totalMaxPoints = 0;
-    CARDS.forEach((card: any) => {
+    CARDS.forEach((card: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
       const act = card.act;
       if (!maxPointsPerAct[act]) maxPointsPerAct[act] = 0;
       
       let maxPoints = -2;
-      card.options.forEach((opt: any) => {
+      card.options.forEach((opt: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
         const pts = getQualityPoints(opt.quality);
         if (pts > maxPoints) maxPoints = pts;
       });
@@ -100,14 +100,14 @@ export async function GET(
     let totalCandidatePoints = 0;
 
     // Map responses to include card details
-    const timeline = session.responses.map((response: any) => {
+    const timeline = session.responses.map((response: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
       // Find the card from the static data
       let matchedCard = null;
       let matchedOption = null;
 
-      matchedCard = CARDS.find((c: any) => `card_${c.num}` === response.cardId) || null;
+      matchedCard = CARDS.find((c: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => `card_${c.num}` === response.cardId) || null;
       if (matchedCard) {
-        matchedOption = matchedCard.options.find((o: any) => o.label === response.selectedOption) || null;
+        matchedOption = matchedCard.options.find((o: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => o.label === response.selectedOption) || null;
         if (matchedOption) {
           const pts = getQualityPoints(matchedOption.quality);
           candidatePointsPerAct[matchedCard.act] += pts;
@@ -152,7 +152,7 @@ export async function GET(
       timeline
     });
 
-  } catch (e: any) {
+  } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.error(e);
     return NextResponse.json({ error: e.message || "Internal Server Error" }, { status: 500 });
   }

@@ -35,8 +35,8 @@ export default function AdminLogin() {
       }
       
       router.push("/admin");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export default function AdminLogin() {
           </form>
 
           <div className="mt-8 text-center text-sm text-slate-500">
-            Don't have an account? <a href="/admin/signup" className="text-brand-purple font-bold hover:underline">Create Organization</a>
+            Don&apos;t have an account? <a href="/admin/signup" className="text-brand-purple font-bold hover:underline">Create Organization</a>
           </div>
         </div>
       </div>

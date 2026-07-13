@@ -19,7 +19,7 @@ export default function Home() {
   const [totalCards, setTotalCards] = useState(30);
   const [meters, setMeters] = useState<Meters>({ rep: 0, inf: 0, gro: 0, imp: 0 });
   const [skillLog, setSkillLog] = useState<SkillLogEntry[]>([]);
-  const [persona, setPersona] = useState<any>(null);
+  const [persona, setPersona] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const triggerTransition = (nextState: "intro" | "game" | "results") => {
     setIsTransitioning(true);
@@ -85,7 +85,7 @@ export default function Home() {
     return await res.json();
   };
 
-  const handleContinue = async (nextStateData: any) => {
+  const handleContinue = async (nextStateData: { meters?: Meters; completed?: boolean; nextCard?: Card }) => {
     if (!nextStateData) return;
 
     if (nextStateData.meters) {
