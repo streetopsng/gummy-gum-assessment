@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
     }).filter(Boolean);
 
     // Sort by most recently active
-    candidates.sort((a, b) => new Date(b!.lastActive).getTime() - new Date(a!.lastActive).getTime());
+    candidates.sort((a: any, b: any) => new Date(b!.lastActive).getTime() - new Date(a!.lastActive).getTime());
 
     const attendanceRate = totalSessions > 0 ? Math.round((totalCompleted / totalSessions) * 100) : 0;
 

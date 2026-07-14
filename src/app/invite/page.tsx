@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Gamepad2 } from "lucide-react";
 
-export default function InviteReceiverPage() {
+function InviteReceiverPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState("Authenticating...");
@@ -72,5 +72,17 @@ export default function InviteReceiverPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function InviteReceiverPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="w-8 h-8 rounded-full border-2 border-brand-purple border-t-transparent animate-spin"></div>
+      </div>
+    }>
+      <InviteReceiverPageContent />
+    </Suspense>
   );
 }
