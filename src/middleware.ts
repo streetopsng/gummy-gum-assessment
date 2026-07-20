@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+// @ts-ignore
 import { jwtVerify } from 'jose';
 
-export async function proxy(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const token = req.cookies.get('auth_token')?.value;
 
-  // Protect the root route / and /api/simulation
-  const isProtectedPath = req.nextUrl.pathname === '/' || req.nextUrl.pathname.startsWith('/api/simulation');
+  // Protect simulation paths? No, candidates need to access them without auth_token
+  const isProtectedPath = false;
   const isAuthPath = req.nextUrl.pathname.startsWith('/auth');
 
   // Protect Admin routes
