@@ -51,11 +51,6 @@ function AdminDashboardContent() {
       });
   }, []);
 
-  const handleSignOut = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/auth");
-  };
-
   const openCandidateDetails = async (userId: string) => {
     setSelectedUserId(userId);
     setDetailsLoading(true);
@@ -73,29 +68,6 @@ function AdminDashboardContent() {
   const closeDetails = () => {
     setSelectedUserId(null);
     setDetails(null);
-  };
-
-  const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setInviting(true);
-    try {
-      const res = await fetch("/api/admin/invite", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: inviteName, email: inviteEmail })
-      });
-      const d = await res.json();
-      if (d.magicLink) {
-        setInviteLink(d.magicLink);
-      } else {
-        alert(d.error || "Failed to generate magic link. Please check server logs.");
-      }
-    } catch (e) {
-      console.error(e);
-      alert("A network error occurred. Please try again.");
-    } finally {
-      setInviting(false);
-    }
   };
 
   if (loading) {
@@ -196,9 +168,6 @@ function AdminDashboardContent() {
               <span className="text-[14px] font-bold">Admin</span>
               <span className="text-[10px] font-bold text-brand-purple bg-brand-purple/10 px-2 py-0.5 rounded uppercase tracking-wider">Recruiter</span>
             </div>
-            <button onClick={handleSignOut} className="ml-2 text-slate-400 hover:text-slate-700 transition-colors">
-              <LogOut className="w-4 h-4" />
-            </button>
           </div>
         </header>
 
@@ -223,11 +192,6 @@ function AdminDashboardContent() {
               <p className="text-white/80 text-[15px] font-light max-w-xl">
                 WorkReady™ Africa has processed {data.metrics.totalSessions} assessments with a {data.metrics.attendanceRate}% average completion rate.
               </p>
-            </div>
-            <div className="relative z-10 flex gap-3">
-              <button onClick={() => setShowInviteModal(true)} className="px-5 py-2.5 rounded-full bg-brand-yellow text-slate-900 hover:bg-brand-yellowDark transition-colors font-bold text-[14px]">
-                Invite Candidate
-              </button>
             </div>
           </div>
 
@@ -345,77 +309,6 @@ function AdminDashboardContent() {
 
         </div>
       </main>
-
-      {/* Invite Modal */}
-      {showInviteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h2 className="font-bold text-lg text-slate-900">Invite Candidate</h2>
-              <button onClick={() => {setShowInviteModal(false); setInviteLink("");}} className="text-slate-400 hover:text-slate-700 transition-colors">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="p-6">
-              {inviteLink ? (
-                <div className="flex flex-col gap-4 text-center">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-2 text-emerald-600">
-                    <CheckCircle className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-bold text-lg">Invite Generated!</h3>
-                  <p className="text-sm text-slate-500 mb-2">Copy this magic link and send it to {inviteName}. They won&apos;t need a password.</p>
-                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-700 break-all select-all relative group cursor-text">
-                    {inviteLink}
-                  </div>
-                  <button 
-                    onClick={() => {setShowInviteModal(false); setInviteLink(""); setInviteName(""); setInviteEmail("");}}
-                    className="mt-2 w-full py-2.5 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-colors"
-                  >
-                    Done
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleInvite} className="flex flex-col gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Candidate Name</label>
-                    <input 
-                      type="text" 
-                      value={inviteName} 
-                      onChange={e => setInviteName(e.target.value)} 
-                      required 
-                      className="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple/30"
-                      placeholder="Jane Doe"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Email Address</label>
-                    <input 
-                      type="email" 
-                      value={inviteEmail} 
-                      onChange={e => setInviteEmail(e.target.value)} 
-                      required 
-                      className="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple/30"
-                      placeholder="jane@example.com"
-                    />
-                  </div>
-                  <button 
-                    type="submit" 
-                    disabled={inviting}
-                    className="mt-4 w-full py-3 bg-brand-purple text-white rounded-lg font-bold hover:bg-brand-purpleDark transition-colors disabled:opacity-50 flex justify-center items-center gap-2"
-                  >
-                    {inviting ? (
-                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Generating...</>
-                    ) : "Generate Magic Link"}
-                  </button>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Slide-over Detailed View */}
       {selectedUserId && (
         <>
           {/* Backdrop */}

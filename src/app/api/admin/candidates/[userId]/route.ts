@@ -3,9 +3,6 @@ import prisma from "@/lib/db";
 import { CARDS } from "../../../../../data/cards";
 import { PERSONAS } from "../../../../../data/personas";
 import { Meters } from "../../../../../data/types";
-import { jwtVerify } from "jose";
-
-
 
 const getQualityPoints = (quality: string) => {
   switch (quality) {
@@ -22,22 +19,11 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const token = req.cookies.get("auth_token")?.value;
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "default_super_secret_for_dev_only");
-    const { payload } = await jwtVerify(token, secret);
-    
-    if (payload.role !== "HR" || !payload.organizationId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
     const { userId } = await params;
 
     const user = await prisma.user.findUnique({
       where: { 
-        id: userId,
-        organizationId: payload.organizationId as string
+        id: userId
       },
       include: {
         sessions: {

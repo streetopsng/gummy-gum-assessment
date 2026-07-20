@@ -3,9 +3,6 @@ import prisma from "@/lib/db";
 import { PERSONAS } from "../../../../data/personas";
 import { Meters } from "../../../../data/types";
 import { CARDS } from "../../../../data/cards";
-import { jwtVerify } from "jose";
-
-
 
 const getQualityPoints = (quality: string) => {
   switch (quality) {
@@ -19,19 +16,8 @@ const getQualityPoints = (quality: string) => {
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("auth_token")?.value;
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "default_super_secret_for_dev_only");
-    const { payload } = await jwtVerify(token, secret);
-    
-    if (payload.role !== "HR" || !payload.organizationId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
     const users = await prisma.user.findMany({
       where: { 
-        organizationId: payload.organizationId as string,
         role: "CANDIDATE" 
       },
       include: {

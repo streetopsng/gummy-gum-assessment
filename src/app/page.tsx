@@ -56,13 +56,17 @@ export default function Home() {
         }
       })
       .catch(() => {
-        router.push("/auth");
+        setGameState("intro");
       });
-  }, [router]);
+  }, []);
 
-  const handleStart = async () => {
+  const handleStart = async (name: string) => {
     try {
-      const res = await fetch("/api/simulation/start", { method: "POST" });
+      const res = await fetch("/api/simulation/start", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
       const data = await res.json();
       setSessionId(data.session_id);
       setCurrentCard(data.card);

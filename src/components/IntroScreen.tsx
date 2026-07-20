@@ -1,11 +1,12 @@
 import { useState } from "react";
 
 type IntroScreenProps = {
-  onStart: () => void;
+  onStart: (name: string) => void;
 };
 
 export function IntroScreen({ onStart }: IntroScreenProps) {
   const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState("");
   return (
     <div className="flex-grow flex flex-col md:flex-row h-full relative overflow-hidden bg-slate-50">
 
@@ -99,6 +100,17 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
             <p className="text-[15px] leading-relaxed text-slate-500 mb-8 font-light italic">
               This is a fixed-sequence simulation. Everyone sees the same thirty scenes, in the same order. Your choices are scored, not routed.
             </p>
+            <div className="mb-6">
+              <label htmlFor="candidate-name" className="block text-sm font-semibold text-slate-700 mb-2">Your Name (Optional)</label>
+              <input 
+                id="candidate-name"
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name to begin..."
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-purple focus:ring-2 focus:ring-brand-purple/20 transition-all"
+              />
+            </div>
             <div className="flex gap-4 justify-end">
               <button 
                 onClick={() => setShowModal(false)}
@@ -107,7 +119,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
                 Cancel
               </button>
               <button 
-                onClick={onStart}
+                onClick={() => onStart(name.trim() || "Anonymous")}
                 className="bg-brand-purple text-white px-8 py-3 rounded-full font-semibold text-sm transition-all hover:bg-brand-purpleDark hover:shadow-md hover:-translate-y-0.5"
               >
                 Start Now
