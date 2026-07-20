@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/db";
 import { CARDS } from "../../../../../data/cards";
 import { PERSONAS } from "../../../../../data/personas";
 import { Meters } from "../../../../../data/types";
 import { jwtVerify } from "jose";
 
-const prisma = new PrismaClient();
+
 
 const getQualityPoints = (quality: string) => {
   switch (quality) {

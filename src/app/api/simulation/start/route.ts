@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/db";
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { CARDS } from "../../../../data/cards";
 
-const prisma = new PrismaClient();
+
 
 export async function POST(req: Request /* eslint-disable-line @typescript-eslint/no-unused-vars */) {
   try {

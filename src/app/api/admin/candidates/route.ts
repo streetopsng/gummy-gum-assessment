@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/db";
 import { PERSONAS } from "../../../../data/personas";
 import { Meters } from "../../../../data/types";
 import { CARDS } from "../../../../data/cards";
 import { jwtVerify } from "jose";
 
-const prisma = new PrismaClient();
+
 
 const getQualityPoints = (quality: string) => {
   switch (quality) {
@@ -103,7 +103,11 @@ export async function GET(req: NextRequest) {
     }).filter(Boolean);
 
     // Sort by most recently active
-    candidates.sort((a: any, b: any) => new Date(b!.lastActive).getTime() - new Date(a!.lastActive).getTime());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    candidates.sort((a: any, b: any) => {
+      if (!a || !b) return 0;
+      return new Date(b.lastActive).getTime() - new Date(a.lastActive).getTime();
+    });
 
     const attendanceRate = totalSessions > 0 ? Math.round((totalCompleted / totalSessions) * 100) : 0;
 

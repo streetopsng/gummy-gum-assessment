@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/db";
 import { PERSONAS } from "../../../../data/personas";
 import { Persona } from "../../../../data/types";
 
-const prisma = new PrismaClient();
+
 
 export async function GET(req: Request) {
   try {

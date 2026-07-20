@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/db";
 import { CARDS } from "../../../../data/cards";
 
-const prisma = new PrismaClient();
+
 
 const getQualityPoints = (quality: string) => {
   switch (quality) {
