@@ -30,9 +30,10 @@ export async function POST(req: Request) {
 
     // Set cookie
     const response = NextResponse.json({ success: true });
+    const isProd = process.env.NODE_ENV === "production";
     response.cookies.set("auth_token", jwt, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProd,
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60, // 7 days
       path: '/'
