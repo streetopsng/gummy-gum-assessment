@@ -1,8 +1,41 @@
 "use client";
 
-import { Gamepad2 } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Gamepad2, ArrowRight } from "lucide-react";
 
 export default function AuthPage() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/public-start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        router.push("/");
+      } else {
+        setError(data.error || "Failed to start assessment");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("A network error occurred. Please try again.");
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden">
       <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-purple/10 via-slate-50 to-slate-50 pointer-events-none"></div>
@@ -18,12 +51,50 @@ export default function AuthPage() {
         </h1>
         
         <p className="text-slate-500 text-[15px] leading-relaxed mb-8">
-          Access to this assessment is by invitation only. Please check your email for your unique magic link provided by your recruiter.
+          Welcome to the assessment. Please enter your details to begin.
         </p>
 
-        <div className="bg-slate-50 border border-slate-200 w-full p-4 rounded-xl text-[13px] text-slate-500 font-medium italic mb-6">
-          If you received an invite link, simply click it to begin.
-        </div>
+        {error && (
+          <div className="text-rose-500 bg-rose-50 px-4 py-3 rounded-lg text-sm mb-4 border border-rose-100 w-full">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 text-left mb-6">
+          <div>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Full Name</label>
+            <input 
+              type="text" 
+              value={name} 
+              onChange={e => setName(e.target.value)} 
+              required 
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple/30"
+              placeholder="Jane Doe"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Email Address</label>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              required 
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple/30"
+              placeholder="jane@example.com"
+            />
+          </div>
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="mt-4 w-full py-3 bg-brand-purple text-white rounded-lg font-bold hover:bg-brand-purpleDark transition-colors disabled:opacity-50 flex justify-center items-center gap-2"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <>Start Assessment <ArrowRight className="w-4 h-4" /></>
+            )}
+          </button>
+        </form>
 
         <div className="pt-6 border-t border-slate-100 w-full">
           <p className="text-[13px] text-slate-500 font-medium">
