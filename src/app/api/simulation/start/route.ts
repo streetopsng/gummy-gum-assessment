@@ -27,7 +27,8 @@ export async function POST(req: Request) {
       ...firstCard,
       options: firstCard.options.map((opt: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => ({
         label: opt.label,
-        text: opt.text
+        text: opt.text,
+        reaction: opt.reaction
       }))
     };
 

@@ -11,6 +11,7 @@ export type Option = {
   skill: string;
   meters: Meters;
   quality: "Best" | "Good" | "Weak" | "Poor";
+  reaction: string;
 };
 
 export type Card = {
@@ -21,6 +22,7 @@ export type Card = {
   connector: string;
   prompt: string;
   options: Option[];
+  transition: string;
 };
 
 export type Persona = {

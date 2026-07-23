@@ -15,41 +15,73 @@ export function GameScreen({
   onContinue,
 }: GameScreenProps) {
   const [answered, setAnswered] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [reactionText, setReactionText] = useState("");
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const [stage, setStage] = useState<"decision" | "reaction" | "transition">("decision");
+  const [isProcessing, setIsProcessing] = useState(false);
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
-  const [nextGameStateData, setNextGameStateData] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  const [nextGameStateData, setNextGameStateData] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setAnswered(false);
     setSelectedOption(null);
-    setReactionText("");
+    setStage("decision");
+    setIsProcessing(false);
     setIsAnimatingOut(false);
     setHoveredOption(null);
+    setNextGameStateData(null);
+    setIsWaitingForNext(false);
   }, [card.num]);
 
-  const handleSelect = async (option: Option) => {
+  const [isWaitingForNext, setIsWaitingForNext] = useState(false);
+
+  useEffect(() => {
+    if (isWaitingForNext && nextGameStateData) {
+      setIsProcessing(false);
+      setIsAnimatingOut(true);
+      setTimeout(() => onContinue(nextGameStateData), 400);
+    }
+  }, [isWaitingForNext, nextGameStateData, onContinue]);
+
+  const handleSelect = (option: Option) => {
     if (answered) return;
     setAnswered(true);
     setSelectedOption(option);
     
-    // Show temporary loading text while waiting for backend
-    setReactionText("Processing...");
-    
-    try {
-      const response = await onOptionSelect(option.label);
-      setIsAnimatingOut(true);
-      setTimeout(() => {
-        onContinue(response);
-      }, 400);
-    } catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-      setReactionText("Network error. Please try again.");
+    // Optimistically go to reaction screen immediately
+    setStage("reaction");
+
+    // Fire network request in the background
+    onOptionSelect(option.label).then((response) => {
+      setNextGameStateData(response);
+    }).catch(() => {
+      alert("Network error. Please try again.");
+      setAnswered(false);
+      setSelectedOption(null);
+      setStage("decision");
+    });
+  };
+
+  const handleReactionContinue = () => {
+    if (card.transition && (!nextGameStateData || !nextGameStateData.completed)) {
+      setStage("transition");
+    } else {
+      proceedToNext();
     }
   };
 
-  const handleContinueClick = () => { // eslint-disable-line @typescript-eslint/no-unused-vars
+  const handleTransitionContinue = () => {
+    proceedToNext();
+  };
+
+  const proceedToNext = () => {
+    if (!nextGameStateData) {
+      setIsProcessing(true); // Show loader if network hasn't finished
+      setIsWaitingForNext(true);
+      return;
+    }
+    
     setIsAnimatingOut(true);
     setTimeout(() => {
       onContinue(nextGameStateData);
@@ -58,7 +90,7 @@ export function GameScreen({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (answered) return;
+      if (stage !== "decision" || answered || isProcessing) return;
       
       const key = e.key.toLowerCase();
       let index = -1;
@@ -75,9 +107,52 @@ export function GameScreen({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [answered, card.options]);
+  }, [stage, answered, isProcessing, card.options]);
 
-  const isProcessing = reactionText === "Processing...";
+  if (stage === "reaction" && selectedOption) {
+    return (
+      <div className={`flex-grow flex items-center justify-center p-8 bg-slate-50 relative overflow-hidden transition-all duration-400 ease-in-out ${isAnimatingOut ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
+        <div className="max-w-[640px] w-full text-center animate-slide-in-up">
+          <span className="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-brand-purple mb-6">
+            ● What Happens
+          </span>
+          <p className="font-display text-[24px] md:text-[28px] font-medium text-slate-900 leading-relaxed whitespace-pre-line mb-8">
+            {selectedOption.reaction}
+          </p>
+          <button 
+            onClick={handleReactionContinue}
+            className="bg-brand-purple text-white px-8 py-3 rounded-full font-semibold transition-all hover:bg-brand-purpleDark hover:-translate-y-0.5 shadow-sm hover:shadow"
+          >
+            Continue →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (stage === "transition") {
+    return (
+      <div className={`flex-grow flex items-center justify-center p-8 bg-slate-900 relative overflow-hidden transition-all duration-400 ease-in-out ${isAnimatingOut ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
+        <div className="max-w-[640px] w-full text-center animate-slide-in-up">
+          <span className="block text-slate-400 text-[14px] font-medium mb-3">
+            {card.day}
+          </span>
+          <span className="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-brand-yellow mb-6">
+            ● Meanwhile
+          </span>
+          <p className="font-display text-[22px] md:text-[26px] font-medium text-slate-100 leading-relaxed mb-10">
+            {card.transition}
+          </p>
+          <button 
+            onClick={handleTransitionContinue}
+            className="bg-brand-yellow text-slate-900 px-8 py-3 rounded-full font-bold transition-all hover:bg-brand-yellowDark hover:-translate-y-0.5 shadow-sm hover:shadow"
+          >
+            Continue →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`flex-grow flex flex-col md:flex-row relative overflow-hidden transition-all duration-400 ease-in-out bg-slate-50 ${isAnimatingOut ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
@@ -140,7 +215,7 @@ export function GameScreen({
         {isProcessing && (
           <div className="flex flex-col items-center justify-center h-full animate-fade-in gap-4">
             <div className="w-12 h-12 rounded-full border-4 border-brand-purple border-t-transparent animate-spin"></div>
-            <div className="text-brand-purple font-medium tracking-widest uppercase text-sm animate-pulse">Saving...</div>
+            <div className="text-brand-purple font-medium tracking-widest uppercase text-sm animate-pulse">Processing...</div>
           </div>
         )}
       </div>

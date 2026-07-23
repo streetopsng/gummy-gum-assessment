@@ -81,20 +81,14 @@ export async function POST(req: Request) {
     });
 
     // 5. Generate Response Data
-    const lines = [
-      "Noted. The day moves on.",
-      "It works. Ninety days is a long story — this is one line in it.",
-      "That's your call. Life at NovaCore continues.",
-      "Alright. Onward.",
-    ];
-    const reactionText = lines[Math.floor(Math.random() * lines.length)];
+    const reactionText = selectedOption.reaction || "Noted. The day moves on.";
 
     let nextCard = null;
     if (newIndex < CARDS.length) {
       const nextRaw = CARDS[newIndex];
       nextCard = {
         ...nextRaw,
-        options: nextRaw.options.map(o => ({ label: o.label, text: o.text }))
+        options: nextRaw.options.map(o => ({ label: o.label, text: o.text, reaction: o.reaction }))
       };
     }
 

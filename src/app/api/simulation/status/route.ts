@@ -28,7 +28,8 @@ export async function GET(req: Request /* eslint-disable-line @typescript-eslint
       ...currentCardRaw,
       options: currentCardRaw.options.map((opt: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => ({
         label: opt.label,
-        text: opt.text
+        text: opt.text,
+        reaction: opt.reaction
       }))
     };
 
